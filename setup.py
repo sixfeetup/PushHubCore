@@ -36,7 +36,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-requires = [
+install_requires = [
     'pyramid',
     'pyramid_zodbconn',
     'pyramid_tm',
@@ -49,6 +49,12 @@ requires = [
     'feedparser',
     'WebHelpers',
     'rq',
+    ]
+
+tests_require = [
+    'coverage',
+    'mock',
+    'Paste',
     ]
 
 setup(name='PushHubCore',
@@ -69,9 +75,8 @@ setup(name='PushHubCore',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      install_requires=requires,
-      tests_require=requires,
-      extras_require={'test': ['mock']},
+      install_requires=install_requires,
+      tests_require=tests_require,
       test_suite="pushhub",
       entry_points="""\
       [paste.app_factory]
