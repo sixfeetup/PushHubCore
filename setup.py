@@ -37,18 +37,18 @@ README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 install_requires = [
-    'pyramid',
-    'pyramid_zodbconn',
-    'pyramid_tm',
-    'pyramid_debugtoolbar',
-    'ZODB3',
-    'waitress',
-    'repoze.folder',
-    'zope.interface',
-    'requests',
     'feedparser',
-    'WebHelpers',
+    'pyramid',
+    'pyramid_debugtoolbar',
+    'pyramid_tm',
+    'pyramid_zodbconn',
+    'repoze.folder',
+    'requests',
     'rq',
+    'waitress',
+    'WebHelpers',
+    'ZODB3',
+    'zope.interface',
     ]
 
 tests_require = [
