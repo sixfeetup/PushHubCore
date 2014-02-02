@@ -26,8 +26,8 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-"""
 
+"""
 import os
 
 from setuptools import setup, find_packages
@@ -49,42 +49,44 @@ install_requires = [
     'WebHelpers',
     'ZODB3',
     'zope.interface',
-    ]
+]
 
 tests_require = [
     'coverage',
     'mock',
     'Paste',
-    ]
+]
 
-setup(name='PushHubCore',
-      version='0.18',
-      description='PushHubCore',
-      long_description=README + '\n\n' + CHANGES,
-      license='LICENSE.txt',
-      classifiers=[
-          "Programming Language :: Python",
-          "Framework :: Pylons",
-          "Topic :: Internet :: WWW/HTTP",
-          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-          ],
-      author='Six Feet Up',
-      author_email='info@sixfeetup.com',
-      url='http://www.sixfeetup.com',
-      keywords='web pylons pyramid',
-      packages=find_packages(),
-      include_package_data=True,
-      zip_safe=False,
-      install_requires=install_requires,
-      tests_require=tests_require,
-      test_suite="pushhub",
-      entry_points="""\
-      [paste.app_factory]
-      main = pushhub:main
-      [console_scripts]
-      reg_listener = pushhub.scripts:register_listener
-      fetch_all_topics = pushhub.scripts:fetch_all_topics
-      show_subscribers = pushhub.scripts:show_subscribers
-      show_topics = pushhub.scripts:show_topics
-      """,
-      )
+setup(
+    name='PushHubCore',
+    version='0.18',
+    description='PushHubCore',
+    long_description=README + '\n\n' + CHANGES,
+    license='LICENSE.txt',
+    classifiers=[
+        "Programming Language :: Python",
+        "Framework :: Pylons",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+    ],
+    author='Six Feet Up',
+    author_email='info@sixfeetup.com',
+    url='http://www.sixfeetup.com',
+    keywords='web pylons pyramid',
+    packages=find_packages(),
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=install_requires,
+    tests_require=tests_require,
+    test_suite='pushhub.test',
+    entry_points="""
+        [paste.app_factory]
+        main = pushhub:main
+        [console_scripts]
+        reg_listener = pushhub.scripts:register_listener
+        fetch_all_topics = pushhub.scripts:fetch_all_topics
+        show_subscribers = pushhub.scripts:show_subscribers
+        show_topics = pushhub.scripts:show_topics
+        process_failed_queue = pushhub.scripts:process_failed_queue
+    """,
+)
