@@ -247,12 +247,8 @@ class Hub(Folder):
         logger.info('Registered listener with URL %s' % callback_url)
 
     def notify_listeners(self, topics):
-        """Notify listeners about new topics"""
-        topic_urls_to_be_notified = []
         for topic in topics:
             for url, listener in self.listeners.items():
                 if topic.url not in listener.topics.keys():
                     listener.topics.add(topic.url, topic)
-                    topic_urls_to_be_notified.append(topic.url)
-        if topic_urls_to_be_notified:
-            listener.notify(topic_urls_to_be_notified)
+                listener.notify(topic)

@@ -70,6 +70,9 @@ def publish(context, request):
             for (url, topic) in hub.topics.items()
             if url in topic_urls
         ]
+        # XXX: Currently this is needed to ensure the listener gets
+        #      the latest data.
+        hub.fetch_content(topic_urls, request.application_url)
         hub.notify_listeners(topics)
         hub.fetch_all_content(request.application_url)
 
