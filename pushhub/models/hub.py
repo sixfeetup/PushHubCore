@@ -234,21 +234,28 @@ class Hub(Folder):
                 continue
 
     def register_listener(self, callback_url):
+        """Register listener and notify all existing topics"""
         listener = self.get_or_create_listener(callback_url)
         if not self.topics:
             return
-        for topic in self.topics.values():
-            if topic.url in listener.topics.keys():
-                continue
-            listener.topics.add(topic.url, topic)
-            logger.info('Added listener %s to topic %s' % (callback_url,
-                                                           topic.url))
-            listener.notify(topic)
+
+        self._notify_listener(listener, self.topics)
+
         logger.info('Registered listener with URL %s' % callback_url)
 
     def notify_listeners(self, topics):
+        """Notify listeners about new topics"""
+        for url, listener in self.listeners.items():
+            self._notify_listener(listener, topics)
+
+    def _notify_listener(self, listener, topics):
+        """Notifies a listener about new topics"""
+        topic_urls_to_be_notified = []
+
         for topic in topics:
-            for url, listener in self.listeners.items():
-                if topic.url not in listener.topics.keys():
-                    listener.topics.add(topic.url, topic)
-                listener.notify(topic)
+            if topic.url not in listener.topics.keys():
+                listener.topics.add(topic.url, topic)
+                topic_urls_to_be_notified.append(topic.url)
+
+        if topic_urls_to_be_notified:
+            listener.notify(topic_urls_to_be_notified)

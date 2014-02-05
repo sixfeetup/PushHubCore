@@ -67,8 +67,8 @@ class Listener(Persistent):
         self.callback_url = callback_url
         self.topics = Topics()
 
-    def notify(self, topic):
-        headers, data = topic.get_request_data()
+    def notify(self, topic_urls):
         logger.debug('Notify listener: %s' % self.callback_url)
-        response = requests.get(self.callback_url, data=data, headers=headers)
+        response = requests.get(self.callback_url,
+                                data={"hub.urls": topic_urls})
         return response
