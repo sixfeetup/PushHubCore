@@ -37,6 +37,7 @@ from persistent import Persistent
 from repoze.folder import Folder
 import requests
 
+from pyramid.threadlocal import get_current_request
 from zope.interface import Interface, implements
 
 from .topic import Topics
@@ -69,6 +70,9 @@ class Listener(Persistent):
 
     def notify(self, topic_urls):
         logger.debug('Notify listener: %s' % self.callback_url)
-        response = requests.get(self.callback_url,
-                                data={"hub.urls": topic_urls})
+        request = get_current_request()
+        response = requests.get(
+            self.callback_url,
+            data={"hub.urls": topic_urls,
+                  "hub.callback": request.route_url('subscribe')})
         return response
