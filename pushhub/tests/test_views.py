@@ -46,6 +46,7 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(request=testing.DummyRequest())
         self.config.add_route('subscribe', '/subscribe')
+        self.config.add_route('publish', '/publish')
         # Create an in-memory instance of the hub so requests can use it
         self.root = Hub()
 
