@@ -42,6 +42,9 @@ DEFAULT_LEASE_SECONDS = (5 * 24 * 60 * 60)  # 5 days
 @require_post
 def publish(context, request):
     topic_mode = request.POST.get('hub.mode', '')
+    # we track origin of publish and skip it when we're
+    # notifying subscribers
+    publish_source = request.POST.get('publish.source', '')
     topic_urls = request.POST.getall('hub.url')
 
     bad_data = False
@@ -78,7 +81,7 @@ def publish(context, request):
                                   body=error_msg,
                                   headers=[('Content-Type', 'text/plain')])
 
-    hub.notify_subscribers()
+    hub.notify_subscribers(skip_subscriber=publish_source)
 
     return exception_response(204)
 

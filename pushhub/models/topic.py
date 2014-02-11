@@ -40,6 +40,7 @@ from urlparse import urlparse
 
 from feedparser import parse
 from persistent import Persistent
+from pyramid.threadlocal import get_current_request
 import requests
 from requests.exceptions import ConnectionError
 from repoze.folder import Folder
@@ -238,7 +239,7 @@ class Topic(Persistent):
 
         return (headers, body)
 
-    def notify_subscribers(self):
+    def notify_subscribers(self, skip_subscriber=None):
         """
         Notify subscribers to this topic that the feed has been updated.
 
@@ -271,9 +272,18 @@ class Topic(Persistent):
 
         headers = {'Content-Type': c_type}
         body = self.content
+        request = get_current_request()
+        params = {
+            'hub.callback': request.route_url('publish'),
+            'topic.url': self.url,
+        }
 
         for url, subscriber in self.subscribers.items():
-            q.enqueue('pushhub.utils.post', url, body, headers)
+            if skip_subscriber == url:
+                logger.debug('Skipped subscriber %s' % (url))
+                continue
+
+            q.enqueue('pushhub.utils.post', url, body, headers, params)
             logger.debug('Item placed on subscriber queue %s' % (url))
 
         # We've notified all of our subscribers,

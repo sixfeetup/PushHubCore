@@ -114,9 +114,11 @@ def is_valid_url(url):
     return True
 
 
-def post(endpoint, payload, headers, timeout=60):
+def post(endpoint, payload, headers, params=None, timeout=60):
     response = requests.post(
-        endpoint, data=payload, headers=headers, timeout=timeout)
+        endpoint, data=payload,
+        headers=headers, timeout=timeout,
+        params=params)
     return response.status_code
 
 
