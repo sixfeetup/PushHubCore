@@ -30,8 +30,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from unittest import TestCase
 from mock import patch
+from mock import call
 
 from feedparser import parse
+from pyramid import testing
 from requests.exceptions import ConnectionError
 
 from ..models.hub import Hub
@@ -516,7 +518,9 @@ class HubTests(TestCase):
             hub.publish('http://www.example.com/')
             hub.topics['http://www.example.com/'].content_type = 'atom'
             topics = [t for t in hub.topics.values()]
-            hub.notify_listeners(topics)
+            with testing.testConfig(request=testing.DummyRequest()) as config:
+                config.add_route('subscribe', '/subscribe')
+                hub.notify_listeners(topics)
         l = hub.listeners.get('http://www.site.com/')
         self.assertTrue(l.topics.get('http://www.example.com/'))
 
@@ -528,7 +532,9 @@ class HubTests(TestCase):
         with patch('requests.get', new_callable=MockResponse, status_code=200):
             hub.publish('http://www.site.com/')
             hub.topics['http://www.site.com/'].content_type = 'atom'
-            hub.register_listener('http://www.example.com/')
+            with testing.testConfig(request=testing.DummyRequest()) as config:
+                config.add_route('subscribe', '/subscribe')
+                hub.register_listener('http://www.example.com/')
         l = hub.listeners.get('http://www.example.com/')
         self.assertTrue(l.topics.get('http://www.site.com/'))
 
@@ -577,19 +583,20 @@ class HubQueueTests(TestCase):
 
 
 class ListenerTest(TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
 
     def test_notify_listener(self):
-        l = Listener('http://www.site.com/')
-        t = Topic('http://www.example.com/')
-        t.content_type = 'atom'
-        with patch('requests.get', new_callable=MockResponse, status_code=200):
-            response = l.notify(t)
-        self.assertEqual(response.status_code, 200)
+        with testing.testConfig(request=testing.DummyRequest()) as config:
+            t = ["http://foo.com/topic1", "http://foo.com/topic2"]
+            l = Listener('http://www.listener.com/')
+
+            config.add_route('subscribe', '/subscribe')
+
+            with patch('requests.get', status_code=200) as mocked_get:
+                response = l.notify(t)
+                self.assertEquals(mocked_get.mock_calls,
+                    [call('http://www.listener.com/',
+                          data={'hub.callback': 'http://example.com/subscribe',
+                                'hub.urls': ['http://foo.com/topic1', 'http://foo.com/topic2']})])
 
 
 class UtilTests(TestCase):

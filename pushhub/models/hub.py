@@ -239,7 +239,7 @@ class Hub(Folder):
         if not self.topics:
             return
 
-        self._notify_listener(listener, self.topics)
+        self._notify_listener(listener, self.topics.values())
 
         logger.info('Registered listener with URL %s' % callback_url)
 

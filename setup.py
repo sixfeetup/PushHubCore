@@ -38,7 +38,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 install_requires = [
     'feedparser',
-    'pyramid',
+    'pyramid>1.3',  # support pyramid.testing.testConfig
     'pyramid_debugtoolbar',
     'pyramid_tm',
     'pyramid_zodbconn',
