@@ -73,6 +73,6 @@ class Listener(Persistent):
         request = get_current_request()
         response = requests.get(
             self.callback_url,
-            data={"hub.urls": topic_urls,
-                  "hub.callback": request.route_url('subscribe')})
+            params={"hub.urls": topic_urls,
+                    "hub.callback": request.route_url('subscribe')})
         return response
