@@ -77,6 +77,7 @@ def publish(context, request):
         hub.fetch_all_content(request.application_url)
 
     if bad_data and error_msg:
+        logger.error("Error while publishing: %s" % error_msg)
         return exception_response(400,
                                   body=error_msg,
                                   headers=[('Content-Type', 'text/plain')])
@@ -145,6 +146,7 @@ def subscribe(context, request):
         verify_type = enabled_types
 
     if error_message:
+        logger.error('Error during subscribe: %s' % error_message)
         return exception_response(
             400,
             body=error_message,
@@ -166,7 +168,7 @@ def subscribe(context, request):
                 body="Subscription intent not verified",
                 headers=[("Content-Type", "text/plain")]
             )
-            logger.info('Could not verify intent for subscriber %s', callback)
+            logger.error('Could not verify intent for subscriber %s', callback)
     else:
         # TODO: async verification
         # should return a 202 and then perform verification
@@ -177,7 +179,7 @@ def subscribe(context, request):
             body="async verification currently not supported",
             headers=[("Content-Type", "text/plain")]
         )
-        logger.info('Request for async verification by %s', callback)
+        logger.error('Request for async verification by %s', callback)
     # verified and active
     return exception_response(204)
 
