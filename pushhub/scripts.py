@@ -32,12 +32,9 @@ import optparse
 import textwrap
 import transaction
 import sys
-from datetime import datetime
 
 from pyramid.paster import bootstrap
 from pyramid.request import Request
-from redis import Redis
-from rq.queue import get_failed_queue
 
 
 def register_listener():
@@ -195,31 +192,3 @@ def show_topics():
         print "%s\t%s" % (topic.url, topic.timestamp)
 
     env['closer']()
-
-
-def process_failed_queue():
-    """Process the failures for the Redis Queue
-
-    Retry up to 2000 times. We will have a cron job set up to run this
-    every 5 minutes. So this would basically retry for a week. If we
-    need a smarter scheme, we can add it later.
-    """
-    date_fmt = '%Y-%m-%d %H:%M:%S'
-    failures = get_failed_queue(Redis())
-    jobs = failures.jobs
-    now = datetime.now().strftime(date_fmt)
-    msg = 'Processing %s failed jobs' % len(jobs)
-    print "%s %s %s" % (now,  __name__, msg)
-    for job in jobs:
-        now = datetime.now().strftime(date_fmt)
-        retries = job.meta.setdefault('retries', 0) + 1
-        job.meta['retries'] = retries
-        job.save()
-        if retries >= 2000:
-            msg = 'Deleting job id %s after %s retries' % (job.id, retries)
-            print "%s %s %s" % (now,  __name__, msg)
-            job.delete()
-            continue
-        msg = 'Retry %s for job id %s' % (retries, job.id)
-        print "%s %s %s" % (now,  __name__, msg)
-        failures.requeue(job.id)

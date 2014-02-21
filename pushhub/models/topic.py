@@ -273,7 +273,7 @@ class Topic(Persistent):
         body = self.content
 
         for url, subscriber in self.subscribers.items():
-            q.enqueue('pushhub.utils.post', url, body, headers)
+            q.enqueue('ucla.jobs.hub.post', url, body, headers)
             logger.debug('Item placed on subscriber queue %s' % (url))
 
         # We've notified all of our subscribers,

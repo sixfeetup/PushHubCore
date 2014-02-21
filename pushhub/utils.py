@@ -35,7 +35,6 @@ from copy import deepcopy
 import urllib
 import urlparse
 
-import requests
 from functools import wraps
 
 from pyramid.httpexceptions import exception_response
@@ -112,12 +111,6 @@ def is_valid_url(url):
         return False
 
     return True
-
-
-def post(endpoint, payload, headers, timeout=60):
-    response = requests.post(
-        endpoint, data=payload, headers=headers, timeout=timeout)
-    return response.status_code
 
 
 class FeedComparator(object):
