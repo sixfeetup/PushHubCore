@@ -1,8 +1,8 @@
 PushHubCore
 ===========
 
-The PushHubCore package is an implementation of Google's proposed PubSubHubbub specification. It allows
-'publishers' to provide URLs of RSS or Atom feeds (called 'topics') to the hub, and 
+The PushHubCore package is an implementation of Google's proposed PubSubHubbub specification.
+It allows 'publishers' to provide URLs of RSS or Atom feeds (called 'topics') to the hub, and 
 'subscribers' to register for notifications from the hub when those feeds are updated.
 
 This implementation contains a Hub object that will be initialized at application startup, and
